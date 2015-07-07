@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+import os, os.path
+import sys
+import argparse
+
+IGNORES_DIR = os.path.join(os.path.dirname(__file__), "gitignore")
+
+def match_stack(stack):
+    for curdir, dirs, ignores in os.walk(IGNORES_DIR):
+        for ignore in ignores:
+            if ignore.endswith('.gitignore'):
+                if stack.lower() == ignore.replace('.gitignore','').lower():
+                    return os.path.join(curdir, ignore)
+    return ''
+
+def exec_ignore(match):
+    print(match)
+    os.system('cat %s >> .gitignore' % match)
+    os.system('git add .gitignore')
+    os.system('git commit .gitignore -t %s' % os.path.join(os.path.dirname(__file__), "msg"))
+
+def ignore(stack):
+    match = match_stack(stack)
+    if match:
+        exec_ignore(match)
+    else:
+        print("No .gitignore file found for %s" % stack)
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('stack', help='stack whose ugly files you wish to ignore')
+    args = parser.parse_args()
+    ignore(args.stack)
