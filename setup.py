@@ -3,12 +3,13 @@ import os.path
 
 README = os.path.join(os.path.dirname(__file__), 'README.md')
 
-version = '0.1'
+version = '0.2.4'
 
 with open(README) as fp:
     longdesc = fp.read()
 
-setup(name='ignore',
+setup(name='ignore-by-github',
+    include_package_data=True,
     version=version,
     description='Add common sets of ignored file types to your .gitignore easily',
     long_description=longdesc,
