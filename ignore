@@ -4,7 +4,11 @@ import json
 import base64
 import sys
 import argparse
-from urllib.request import urlopen
+if sys.version_info.major >= 3:
+    from urllib.request import urlopen
+else:
+    from urllib import urlopen
+
 
 # Local Configuration
 CACHE_PATH = os.path.expanduser("~/.ignore-from-github")
