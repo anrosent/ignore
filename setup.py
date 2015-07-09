@@ -3,7 +3,7 @@ import os.path
 
 README = os.path.join(os.path.dirname(__file__), 'README.md')
 
-version = '0.3.0'
+version = '0.3.1'
 
 with open(README) as fp:
     longdesc = fp.read()
@@ -18,8 +18,6 @@ setup(name='ignore-from-github',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Topic :: Software Development',
