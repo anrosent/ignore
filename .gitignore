@@ -23,3 +23,12 @@ Session.vim
 *~
 
 # End ignores for %s >>>>>>>>>>>>
+# Following section ignores files for vim <<<<<<<<<
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+
+# End ignores for vim >>>>>>>>>>>>
