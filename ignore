@@ -7,7 +7,7 @@ import argparse
 from urllib.request import urlopen
 
 # Local Configuration
-CACHE_PATH = os.path.expanduser("~/.ignore-via-github")
+CACHE_PATH = os.path.expanduser("~/.ignore-from-github")
 
 # Data for pulling .gitignore templates hosted on GitHub
 HEAD_URL = "https://api.github.com/repos/github/gitignore/git/refs/heads/master"
