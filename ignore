@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-import os, os.path
-import json
-import base64
-import sys
 import argparse
+import base64
+import json
+import os, os.path
+from subprocess import check_output, CalledProcessError
+import sys
+
 if sys.version_info.major >= 3:
     from urllib.request import urlopen
 else:
@@ -39,6 +41,17 @@ def cache_content(content, stack):
     with open(os.path.join(CACHE_PATH, stack.lower()), 'w') as f:
         print("Caching file at %s" % os.path.join(CACHE_PATH, stack.lower()))
         f.write(content)
+
+def get_ignore_filename(exclude):
+    try:
+        base = check_output("git rev-parse --show-toplevel", shell=True).decode("utf8").strip()
+    except CalledProcessError:
+        raise IOError("Not a git repository (or any of the parent directories)")
+
+    if exclude:
+        return os.path.join(base, ".git/info/exclude")
+    else:
+        return os.path.join(base, ".gitignore")
 
 ################## Search Cache for .gitignore ################################
 def try_cached(stack):
@@ -106,38 +119,43 @@ def tree_find(sha, stack):
 
 ################# Main Funcs ####################################################3
 
-def exec_ignore(ignore_txt, t):
+def exec_ignore(gitignore, ignore_txt, t):
     '''
         Append the contents of the found .gitignore template to the .gitignore
         in the current directory, surrounded by informative comments
     '''
-    with open('.gitignore', 'a') as gitignore:
-        gitignore.write("\n\n# Following section ignores files for %s <<<<<<<<<" % t)
-        gitignore.write('\n' + ignore_txt + '\n')
-        gitignore.write("# End ignores for %s >>>>>>>>>>>>\n\n" % t)
+    gitignore.write("\n\n# Following section ignores files for %s <<<<<<<<<" % t)
+    gitignore.write('\n' + ignore_txt + '\n')
+    gitignore.write("# End ignores for %s >>>>>>>>>>>>\n\n" % t)
     os.system('git add .gitignore')
     os.system('git commit .gitignore -m "Ignoring files for %s, (see https://github.com/github/gitignore.git)"' % t)
 
-def ignore(stack):
+def ignore(args):
     '''
         Search the local cache for desired .gitignore template.
         If not cached, search GitHub's `github/gitignore` repo.
         If either was a hit, append contents of template to .gitignore in 
         current directory
     '''
-    ignorefile = try_cached(stack)
-    if not ignorefile:
-        ignorefile = try_github(stack)
-        if not ignorefile:
-            print("No .gitignore file found for %s anywhere" % stack)
-            sys.exit(1)
-        else:
-            cache_content(ignorefile, stack)
-    exec_ignore(ignorefile, stack)
+    stack = args.stack
+    exclude = args.e
+    ignorefilename = get_ignore_filename(exclude)
+    with open(ignorefilename, 'a') as ignorefile:
+
+        ignoretxt = try_cached(stack)
+        if not ignoretxt:
+            ignoretxt = try_github(stack)
+            if not ignoretxt:
+                print("No .gitignore file found for %s anywhere" % stack)
+                sys.exit(1)
+            else:
+                cache_content(ignoretxt, stack)
+        exec_ignore(ignorefile, ignoretxt, stack)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('stack', help='stack whose ugly files you wish to ignore')
+    parser.add_argument('-e', action='store_true', help='Add to .git/info/exclude instead of .gitignore')
     args = parser.parse_args()
-    ignore(args.stack)
+    ignore(args)
