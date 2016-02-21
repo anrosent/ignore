@@ -112,9 +112,9 @@ def exec_ignore(ignore_txt, t):
         in the current directory, surrounded by informative comments
     '''
     with open('.gitignore', 'a') as gitignore:
-        gitignore.write("# Following section ignores files for %s <<<<<<<<<" % t)
+        gitignore.write("\n\n# Following section ignores files for %s <<<<<<<<<" % t)
         gitignore.write('\n' + ignore_txt + '\n')
-        gitignore.write("# End ignores for %s >>>>>>>>>>>>\n" % t)
+        gitignore.write("# End ignores for %s >>>>>>>>>>>>\n\n" % t)
     os.system('git add .gitignore')
     os.system('git commit .gitignore -m "Ignoring files for %s, (see https://github.com/github/gitignore.git)"' % t)
 
