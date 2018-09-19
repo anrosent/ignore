@@ -8,7 +8,7 @@ pip install ignore-from-github
 ```
 
 ## Usage
-`ignore` allows you to quickly add common sets of file types to your `.gitignore` file. It pulls from `https://github.com/github/gitignore`.
+`ignore` allows you to quickly add common sets of file types to your `.gitignore` file.
 ```
     $   ignore python
     $   cat .gitignore
@@ -24,3 +24,5 @@ pip install ignore-from-github
     .
     .
 ```
+
+It pulls the appropriate `.gitignore` file from `https://github.com/github/gitignore`, appends to your local `.gitignore`, and `git commit`s just the `.gitignore` file. 
